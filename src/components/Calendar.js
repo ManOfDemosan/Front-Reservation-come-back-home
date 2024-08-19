@@ -79,6 +79,29 @@ const Input = styled.input`
     width: 100%;
 `;
 
+const ModalContent = styled.div`
+    padding: 15px;
+    max-width: 250px;
+    margin: auto;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #fff;
+
+    @media (max-width: 768px) {
+        max-width: 90%;
+        padding: 20px;
+    }
+`;
+
+const ModalTitle = styled.h2`
+    font-size: 1.2em;
+    margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+        font-size: 1em;
+    }
+`;
+
 const Button = styled.button`
     padding: 10px 15px;
     background-color: #007bff;
@@ -91,20 +114,10 @@ const Button = styled.button`
     &:hover {
         background-color: #0056b3;
     }
-`;
 
-const ModalContent = styled.div`
-    padding: 15px;
-    max-width: 250px;
-    margin: auto;
-    text-align: center;
-    border-radius: 8px;
-    background-color: #fff;
-`;
-
-const ModalTitle = styled.h2`
-    font-size: 1.2em;
-    margin-bottom: 10px;
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
 `;
 
 const SelectedDatesDisplay = styled.div`
