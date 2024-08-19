@@ -96,12 +96,6 @@ const ModalTitle = styled.h2`
     margin-bottom: 10px;
 `;
 
-const HighlightedName = styled.span`
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #007bff;
-`;
-
 const SelectedDatesDisplay = styled.div`
     margin-top: 10px;
     font-size: 0.9em;
@@ -113,7 +107,6 @@ const CalendarComponent = () => {
     const [name, setName] = useState('');
     const [reservations, setReservations] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [modalContent, setModalContent] = useState('');
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -229,7 +222,6 @@ const CalendarComponent = () => {
             >
                 <ModalContent>
                     <ModalTitle>누구인가 예약한자 </ModalTitle>
-                    {modalContent}
                     <Button onClick={closeModal}>Close</Button>
                 </ModalContent>
             </Modal>
