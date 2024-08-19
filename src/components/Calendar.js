@@ -112,12 +112,12 @@ const SelectedDatesDisplay = styled.div`
     font-size: 0.9em;
     color: #555;
 `;
-
 const CalendarComponent = () => {
     const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
     const [name, setName] = useState('');
     const [reservations, setReservations] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalContent, setModalContent] = useState('');
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -142,8 +142,18 @@ const CalendarComponent = () => {
         fetchReservations();
     }, []);
 
-    const handleDateChange = (range) => {
-        setSelectedDateRange(range);
+    const handleDateClick = (value) => {
+        const clickedDate = value.toISOString().split('T')[0];
+        if (reservations[clickedDate]) {
+            setModalContent(
+                `${clickedDate} is reserved by ${reservations[clickedDate]}`
+            );
+            setModalIsOpen(true);
+        }
+    };
+
+    const handleDateChange = (value) => {
+        setSelectedDateRange(value);
     };
 
     const handleReservation = async () => {
@@ -201,11 +211,8 @@ const CalendarComponent = () => {
     const tileDisabled = ({ date }) => {
         const startDate = new Date(2024, 9, 14); // 2024년 10월 14일
         const endDate = new Date(2024, 10, 18); // 2024년 11월 18일
-        const formattedDate = date.toISOString().split('T')[0];
 
-        return (
-            date < startDate || date > endDate || reservations[formattedDate]
-        );
+        return date < startDate || date > endDate;
     };
 
     const tileClassName = ({ date, view }) => {
@@ -223,6 +230,7 @@ const CalendarComponent = () => {
         <Container>
             <StyledCalendar
                 onChange={handleDateChange}
+                onClickDay={handleDateClick}
                 value={selectedDateRange}
                 tileDisabled={tileDisabled}
                 tileClassName={tileClassName}
@@ -234,8 +242,14 @@ const CalendarComponent = () => {
                 selectRange={true}
                 minDate={new Date(2024, 9, 14)}
                 maxDate={new Date(2024, 10, 18)}
+                defaultActiveStartDate={new Date(2024, 9, 1)} // 2024년 10월 1일부터 시작
             />
-            <InputContainer show={selectedDateRange[0] && selectedDateRange[1]}>
+            <InputContainer
+                show={
+                    selectedDateRange[0] !== null &&
+                    selectedDateRange[1] !== null
+                }
+            >
                 <Input
                     type="text"
                     placeholder="Enter your name"
@@ -256,7 +270,8 @@ const CalendarComponent = () => {
                 ariaHideApp={false}
             >
                 <ModalContent>
-                    <ModalTitle>누구인가 예약한자 </ModalTitle>
+                    <ModalTitle>예약 정보</ModalTitle>
+                    <p>{modalContent}</p>
                     <Button onClick={closeModal}>Close</Button>
                 </ModalContent>
             </Modal>
