@@ -99,7 +99,7 @@ const CalendarComponent = () => {
         const fetchReservations = async () => {
             try {
                 const response = await axios.get(
-                    'http://localhost:3000/api/reservations'
+                    'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations'
                 );
                 console.log('Reservations data received:', response.data);
                 const reservationData = {};
@@ -145,10 +145,13 @@ const CalendarComponent = () => {
         const formattedDate = date.toISOString().split('T')[0];
 
         try {
-            await axios.post('http://localhost:3000/api/reservations/reserve', {
-                name,
-                date: formattedDate,
-            });
+            await axios.post(
+                'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations/reserve',
+                {
+                    name,
+                    date: formattedDate,
+                }
+            );
             setReservations({ ...reservations, [formattedDate]: name });
             setDate(null);
             setName('');
