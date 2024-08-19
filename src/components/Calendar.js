@@ -80,30 +80,30 @@ const Input = styled.input`
 `;
 
 const ModalContent = styled.div`
-    padding: 15px;
-    max-width: 250px;
+    padding: 10px; /* 여백을 조금 줄임 */
+    max-width: 200px; /* 모달의 최대 너비를 줄임 */
     margin: auto;
     text-align: center;
     border-radius: 8px;
     background-color: #fff;
 
     @media (max-width: 768px) {
-        max-width: 90%;
-        padding: 20px;
+        max-width: 80%; /* 모바일에서는 모달의 최대 너비를 80%로 설정 */
+        padding: 15px; /* 모바일에서도 여백을 약간 줄임 */
     }
 `;
 
 const ModalTitle = styled.h2`
-    font-size: 1.2em;
+    font-size: 1em; /* 글자 크기를 줄임 */
     margin-bottom: 10px;
 
     @media (max-width: 768px) {
-        font-size: 1em;
+        font-size: 0.9em; /* 모바일에서는 글자 크기를 더 줄임 */
     }
 `;
 
 const Button = styled.button`
-    padding: 10px 15px;
+    padding: 8px 12px; /* 버튼의 여백을 줄임 */
     background-color: #007bff;
     color: white;
     border: none;
@@ -116,7 +116,7 @@ const Button = styled.button`
     }
 
     @media (max-width: 768px) {
-        padding: 10px;
+        padding: 8px; /* 모바일에서도 버튼의 여백을 줄임 */
     }
 `;
 
