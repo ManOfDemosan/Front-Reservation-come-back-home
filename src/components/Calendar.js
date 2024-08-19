@@ -31,6 +31,17 @@ const StyledCalendar = styled(Calendar)`
         color: white;
     }
 
+    .react-calendar__tile--rangeStart,
+    .react-calendar__tile--rangeEnd {
+        background: #28a745;
+        color: white;
+    }
+
+    .react-calendar__tile--rangeBetween {
+        background: #a8e6b1;
+        color: black;
+    }
+
     .react-calendar__tile--disabled {
         background: #ddd;
         color: #888;
@@ -40,7 +51,7 @@ const StyledCalendar = styled(Calendar)`
     .reserved {
         background-color: #f5c6cb !important;
         color: #721c24 !important;
-        cursor: pointer;
+        cursor: not-allowed;
     }
 
     @media (max-width: 768px) {
@@ -103,7 +114,7 @@ const SelectedDatesDisplay = styled.div`
 `;
 
 const CalendarComponent = () => {
-    const [selectedDates, setSelectedDates] = useState([]);
+    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
     const [name, setName] = useState('');
     const [reservations, setReservations] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -131,9 +142,8 @@ const CalendarComponent = () => {
         fetchReservations();
     }, []);
 
-    const handleDateChange = (dates) => {
-        const sortedDates = dates.sort((a, b) => a - b);
-        setSelectedDates(sortedDates);
+    const handleDateChange = (range) => {
+        setSelectedDateRange(range);
     };
 
     const handleReservation = async () => {
@@ -142,13 +152,33 @@ const CalendarComponent = () => {
             return;
         }
 
-        if (selectedDates.length === 0) {
-            alert('Please select at least one date.');
+        if (!selectedDateRange[0] || !selectedDateRange[1]) {
+            alert('Please select a date range.');
             return;
         }
 
         try {
-            for (const date of selectedDates) {
+            const startDate = new Date(selectedDateRange[0]);
+            const endDate = new Date(selectedDateRange[1]);
+            for (
+                let date = startDate;
+                date <= endDate;
+                date.setDate(date.getDate() + 1)
+            ) {
+                const formattedDate = date.toISOString().split('T')[0];
+                if (reservations[formattedDate]) {
+                    alert(
+                        `${formattedDate} is already reserved. Please select different dates.`
+                    );
+                    return;
+                }
+            }
+
+            for (
+                let date = startDate;
+                date <= endDate;
+                date.setDate(date.getDate() + 1)
+            ) {
                 const formattedDate = date.toISOString().split('T')[0];
                 await axios.post(
                     'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations/reserve',
@@ -157,25 +187,32 @@ const CalendarComponent = () => {
                         date: formattedDate,
                     }
                 );
-                setReservations({ ...reservations, [formattedDate]: name });
+                setReservations((prev) => ({ ...prev, [formattedDate]: name }));
             }
-            setSelectedDates([]);
+            setSelectedDateRange([null, null]);
             setName('');
+            alert('Reservation successful!');
         } catch (error) {
             console.error('Failed to reserve dates', error);
+            alert('Failed to make reservation. Please try again.');
         }
     };
 
     const tileDisabled = ({ date }) => {
         const startDate = new Date(2024, 9, 14); // 2024년 10월 14일
         const endDate = new Date(2024, 10, 18); // 2024년 11월 18일
+        const formattedDate = date.toISOString().split('T')[0];
 
-        return date < startDate || date > endDate;
+        return (
+            date < startDate || date > endDate || reservations[formattedDate]
+        );
     };
 
-    const tileClassName = ({ date }) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        return reservations[formattedDate] ? 'reserved' : null;
+    const tileClassName = ({ date, view }) => {
+        if (view === 'month') {
+            const formattedDate = date.toISOString().split('T')[0];
+            return reservations[formattedDate] ? 'reserved' : null;
+        }
     };
 
     const closeModal = () => {
@@ -186,7 +223,7 @@ const CalendarComponent = () => {
         <Container>
             <StyledCalendar
                 onChange={handleDateChange}
-                value={selectedDates}
+                value={selectedDateRange}
                 tileDisabled={tileDisabled}
                 tileClassName={tileClassName}
                 minDetail="month"
@@ -194,11 +231,11 @@ const CalendarComponent = () => {
                 view="month"
                 locale="en-US"
                 showNeighboringMonth={false}
-                selectRange={false}
-                allowMultipleSelection={true}
-                activeStartDate={new Date(2024, 9, 1)}
+                selectRange={true}
+                minDate={new Date(2024, 9, 14)}
+                maxDate={new Date(2024, 10, 18)}
             />
-            <InputContainer show={selectedDates.length > 0}>
+            <InputContainer show={selectedDateRange[0] && selectedDateRange[1]}>
                 <Input
                     type="text"
                     placeholder="Enter your name"
@@ -206,10 +243,8 @@ const CalendarComponent = () => {
                     onChange={(e) => setName(e.target.value)}
                 />
                 <SelectedDatesDisplay>
-                    Selected dates:{' '}
-                    {selectedDates
-                        .map((date) => date.toLocaleDateString())
-                        .join(', ')}
+                    Selected dates: {selectedDateRange[0]?.toLocaleDateString()}{' '}
+                    - {selectedDateRange[1]?.toLocaleDateString()}
                 </SelectedDatesDisplay>
                 <Button onClick={handleReservation}>Submit</Button>
             </InputContainer>
