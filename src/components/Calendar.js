@@ -11,26 +11,23 @@ const Container = styled.div`
     align-items: center;
     margin-top: 20px;
     padding: 0 10px;
+    width: 80%; /* 화면의 80%를 차지하게 설정 */
+    max-width: 1000px; /* 최대 너비를 제한 */
 `;
 
 const StyledCalendar = styled(Calendar)`
     width: 100%;
-    max-width: 500px;
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
 
     .react-calendar__tile {
-        padding: 10px;
-        font-size: 1em;
+        padding: 15px; /* 패딩을 증가시켜 더 크게 보이게 함 */
+        font-size: 1.2em; /* 폰트 크기를 키움 */
         position: relative;
     }
 
-    .react-calendar__tile--active {
-        background: #28a745;
-        color: white;
-    }
-
+    .react-calendar__tile--active,
     .react-calendar__tile--rangeStart,
     .react-calendar__tile--rangeEnd {
         background: #28a745;
@@ -52,12 +49,13 @@ const StyledCalendar = styled(Calendar)`
         background-color: #f5c6cb !important;
         color: #721c24 !important;
         cursor: not-allowed;
+        font-weight: bold; /* 예약된 날짜의 폰트를 두껍게 */
     }
 
     @media (max-width: 768px) {
         .react-calendar__tile {
-            padding: 5px;
-            font-size: 0.8em;
+            padding: 10px;
+            font-size: 1em;
         }
     }
 `;
@@ -72,59 +70,58 @@ const InputContainer = styled.div`
 `;
 
 const Input = styled.input`
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
-`;
-
-const ModalContent = styled.div`
-    padding: 10px; /* 여백을 조금 줄임 */
-    max-width: 200px; /* 모달의 최대 너비를 줄임 */
-    margin: auto;
-    text-align: center;
-    border-radius: 8px;
-    background-color: #fff;
-
-    @media (max-width: 768px) {
-        max-width: 80%; /* 모바일에서는 모달의 최대 너비를 80%로 설정 */
-        padding: 15px; /* 모바일에서도 여백을 약간 줄임 */
-    }
-`;
-
-const ModalTitle = styled.h2`
-    font-size: 1em; /* 글자 크기를 줄임 */
-    margin-bottom: 10px;
-
-    @media (max-width: 768px) {
-        font-size: 0.9em; /* 모바일에서는 글자 크기를 더 줄임 */
-    }
+    font-size: 1.1em; /* 입력 필드의 폰트 크기 증가 */
 `;
 
 const Button = styled.button`
-    padding: 8px 12px; /* 버튼의 여백을 줄임 */
+    padding: 12px 15px;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    font-size: 1.1em; /* 버튼의 폰트 크기 증가 */
 
     &:hover {
         background-color: #0056b3;
     }
+`;
+
+const ModalContent = styled.div`
+    padding: 20px;
+    max-width: 250px;
+    margin: auto;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #fff;
 
     @media (max-width: 768px) {
-        padding: 8px; /* 모바일에서도 버튼의 여백을 줄임 */
+        max-width: 80%;
+        padding: 20px;
+    }
+`;
+
+const ModalTitle = styled.h2`
+    font-size: 1.5em; /* 모달 타이틀의 폰트 크기 증가 */
+    margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+        font-size: 1.3em;
     }
 `;
 
 const SelectedDatesDisplay = styled.div`
     margin-top: 10px;
-    font-size: 0.9em;
+    font-size: 1.2em; /* 선택한 날짜 표시 크기 증가 */
     color: #555;
 `;
+
 const CalendarComponent = () => {
     const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
     const [name, setName] = useState('');
@@ -222,8 +219,8 @@ const CalendarComponent = () => {
     };
 
     const tileDisabled = ({ date }) => {
-        const startDate = new Date(2024, 9, 14); // 2024년 10월 14일
-        const endDate = new Date(2024, 10, 18); // 2024년 11월 18일
+        const startDate = new Date(2024, 9, 14);
+        const endDate = new Date(2024, 10, 18);
 
         return date < startDate || date > endDate;
     };
@@ -255,7 +252,7 @@ const CalendarComponent = () => {
                 selectRange={true}
                 minDate={new Date(2024, 9, 14)}
                 maxDate={new Date(2024, 10, 18)}
-                defaultActiveStartDate={new Date(2024, 9, 1)} // 2024년 10월 1일부터 시작
+                defaultActiveStartDate={new Date(2024, 9, 1)}
             />
             <InputContainer
                 show={
