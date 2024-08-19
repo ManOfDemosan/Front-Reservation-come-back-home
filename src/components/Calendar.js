@@ -146,7 +146,7 @@ const CalendarComponent = () => {
         const clickedDate = value.toISOString().split('T')[0];
         if (reservations[clickedDate]) {
             setModalContent(
-                `${clickedDate} 에는 ${reservations[clickedDate]} 가 예약을 이미 해부렸네용!`
+                `${clickedDate} 에는 ${reservations[clickedDate]} 이(가) 예약을 이미 해부렸네용!`
             );
             setModalIsOpen(true);
         }
