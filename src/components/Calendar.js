@@ -10,18 +10,19 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
+    padding: 0 10px;
 `;
 
 const StyledCalendar = styled(Calendar)`
     width: 100%;
-    max-width: 900px;
+    max-width: 500px;
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
 
     .react-calendar__tile {
-        padding: 20px;
-        font-size: 1.2em;
+        padding: 10px;
+        font-size: 1em;
         position: relative;
     }
 
@@ -41,18 +42,30 @@ const StyledCalendar = styled(Calendar)`
         color: #721c24 !important;
         cursor: pointer;
     }
+
+    @media (max-width: 768px) {
+        .react-calendar__tile {
+            padding: 5px;
+            font-size: 0.8em;
+        }
+    }
 `;
 
 const InputContainer = styled.div`
     margin-top: 20px;
-    display: ${(props) => (props.show ? 'block' : 'none')};
+    display: ${(props) => (props.show ? 'flex' : 'none')};
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
 `;
 
 const Input = styled.input`
     padding: 10px;
-    margin-right: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    width: 100%;
 `;
 
 const Button = styled.button`
@@ -62,6 +75,7 @@ const Button = styled.button`
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 100%;
 
     &:hover {
         background-color: #0056b3;
@@ -69,8 +83,8 @@ const Button = styled.button`
 `;
 
 const ModalContent = styled.div`
-    padding: 15px; /* 모달 크기를 조정 */
-    max-width: 250px; /* 모달 너비를 줄임 */
+    padding: 15px;
+    max-width: 250px;
     margin: auto;
     text-align: center;
     border-radius: 8px;
@@ -78,18 +92,24 @@ const ModalContent = styled.div`
 `;
 
 const ModalTitle = styled.h2`
-    font-size: 1.2em; /* 타이틀 크기 */
+    font-size: 1.2em;
     margin-bottom: 10px;
 `;
 
 const HighlightedName = styled.span`
-    font-size: 1.5em; /* 예약자 이름 크기 */
+    font-size: 1.5em;
     font-weight: bold;
     color: #007bff;
 `;
 
+const SelectedDatesDisplay = styled.div`
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #555;
+`;
+
 const CalendarComponent = () => {
-    const [date, setDate] = useState(null);
+    const [selectedDates, setSelectedDates] = useState([]);
     const [name, setName] = useState('');
     const [reservations, setReservations] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -118,22 +138,9 @@ const CalendarComponent = () => {
         fetchReservations();
     }, []);
 
-    const handleDateChange = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        if (reservations[formattedDate]) {
-            setModalContent(
-                <div>
-                    이날의 일정은 이미{' '}
-                    <HighlightedName>
-                        {reservations[formattedDate]}
-                    </HighlightedName>{' '}
-                    (이)가 예약해 부렸네요!
-                </div>
-            );
-            setModalIsOpen(true);
-            return;
-        }
-        setDate(date);
+    const handleDateChange = (dates) => {
+        const sortedDates = dates.sort((a, b) => a - b);
+        setSelectedDates(sortedDates);
     };
 
     const handleReservation = async () => {
@@ -142,21 +149,27 @@ const CalendarComponent = () => {
             return;
         }
 
-        const formattedDate = date.toISOString().split('T')[0];
+        if (selectedDates.length === 0) {
+            alert('Please select at least one date.');
+            return;
+        }
 
         try {
-            await axios.post(
-                'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations/reserve',
-                {
-                    name,
-                    date: formattedDate,
-                }
-            );
-            setReservations({ ...reservations, [formattedDate]: name });
-            setDate(null);
+            for (const date of selectedDates) {
+                const formattedDate = date.toISOString().split('T')[0];
+                await axios.post(
+                    'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations/reserve',
+                    {
+                        name,
+                        date: formattedDate,
+                    }
+                );
+                setReservations({ ...reservations, [formattedDate]: name });
+            }
+            setSelectedDates([]);
             setName('');
         } catch (error) {
-            console.error('Failed to reserve date', error);
+            console.error('Failed to reserve dates', error);
         }
     };
 
@@ -180,7 +193,7 @@ const CalendarComponent = () => {
         <Container>
             <StyledCalendar
                 onChange={handleDateChange}
-                value={date}
+                value={selectedDates}
                 tileDisabled={tileDisabled}
                 tileClassName={tileClassName}
                 minDetail="month"
@@ -188,16 +201,23 @@ const CalendarComponent = () => {
                 view="month"
                 locale="en-US"
                 showNeighboringMonth={false}
-                showDoubleView={true}
+                selectRange={false}
+                allowMultipleSelection={true}
                 activeStartDate={new Date(2024, 9, 1)}
             />
-            <InputContainer show={date}>
+            <InputContainer show={selectedDates.length > 0}>
                 <Input
                     type="text"
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
+                <SelectedDatesDisplay>
+                    Selected dates:{' '}
+                    {selectedDates
+                        .map((date) => date.toLocaleDateString())
+                        .join(', ')}
+                </SelectedDatesDisplay>
                 <Button onClick={handleReservation}>Submit</Button>
             </InputContainer>
 
