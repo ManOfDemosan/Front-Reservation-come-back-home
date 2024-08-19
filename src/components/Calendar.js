@@ -252,7 +252,7 @@ const CalendarComponent = () => {
             >
                 <Input
                     type="text"
-                    placeholder="이름을 입력해주세요"
+                    placeholder="이름을 알려주세요 😊"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
