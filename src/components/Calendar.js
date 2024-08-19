@@ -146,7 +146,7 @@ const CalendarComponent = () => {
         const clickedDate = value.toISOString().split('T')[0];
         if (reservations[clickedDate]) {
             setModalContent(
-                `${clickedDate} is reserved by ${reservations[clickedDate]}`
+                `${clickedDate} 에는 ${reservations[clickedDate]} 가 예약을 이미 해부렸네용!`
             );
             setModalIsOpen(true);
         }
@@ -158,12 +158,12 @@ const CalendarComponent = () => {
 
     const handleReservation = async () => {
         if (!name) {
-            alert('Please enter your name.');
+            alert('이름을 입력해주세요!');
             return;
         }
 
         if (!selectedDateRange[0] || !selectedDateRange[1]) {
-            alert('Please select a date range.');
+            alert('예약할 날짜를 선택해주세요!');
             return;
         }
 
@@ -178,7 +178,7 @@ const CalendarComponent = () => {
                 const formattedDate = date.toISOString().split('T')[0];
                 if (reservations[formattedDate]) {
                     alert(
-                        `${formattedDate} is already reserved. Please select different dates.`
+                        `${formattedDate} 는 이미 ${reservations[formattedDate]} 님이 예약했어요 힝구 😢`
                     );
                     return;
                 }
@@ -201,10 +201,10 @@ const CalendarComponent = () => {
             }
             setSelectedDateRange([null, null]);
             setName('');
-            alert('Reservation successful!');
+            alert('예약 성공! 🎉');
         } catch (error) {
             console.error('Failed to reserve dates', error);
-            alert('Failed to make reservation. Please try again.');
+            alert('예약 실패! 😢');
         }
     };
 
@@ -252,7 +252,7 @@ const CalendarComponent = () => {
             >
                 <Input
                     type="text"
-                    placeholder="Enter your name"
+                    placeholder="이름을 입력해주세요"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
@@ -270,7 +270,7 @@ const CalendarComponent = () => {
                 ariaHideApp={false}
             >
                 <ModalContent>
-                    <ModalTitle>예약 정보</ModalTitle>
+                    <ModalTitle> 빠르다 빨라 선약한 사람 </ModalTitle>
                     <p>{modalContent}</p>
                     <Button onClick={closeModal}>Close</Button>
                 </ModalContent>
