@@ -215,10 +215,6 @@ const CalendarComponent = () => {
             }
             setSelectedDateRange([null, null]);
             setName('');
-            console.log('sending post request with data:', {
-                name,
-                date: formattedDate,
-            });
             alert('예약 성공! 🎉');
         } catch (error) {
             console.error('Failed to reserve dates', error);
