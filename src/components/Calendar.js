@@ -215,7 +215,7 @@ const CalendarComponent = () => {
             }
             setSelectedDateRange([null, null]);
             setName('');
-            console.log('Sending POST request with data:', {
+            console.log('sending post request with data:', {
                 name,
                 date: formattedDate,
             });
