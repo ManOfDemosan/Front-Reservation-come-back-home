@@ -201,7 +201,7 @@ const CalendarComponent = () => {
             ) {
                 const formattedDate = date.toISOString().split('T')[0];
                 await axios.post(
-                    'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations/reserve',
+                    'https://port-0-back-reservation-come-back-home-m00peap060a6b751.sel4.cloudtype.app/reservations',
                     {
                         name,
                         date: formattedDate,
